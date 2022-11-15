@@ -1,0 +1,4 @@
+rootProject.name = 'equivalence'
+include 'src:main:judgement'
+findProject(':src:main:judgement')?.name = 'judgement'
+
