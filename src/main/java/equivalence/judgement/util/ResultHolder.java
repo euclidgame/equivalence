@@ -23,8 +23,18 @@ public class ResultHolder<T> {
         elements.add(newElement);
     }
 
-    public Stream<T> getRepresentatives() {
+    public Stream<T> representatives() {
         return representatives.stream().map(Element::getElement);
+    }
+
+    public List<T> getRepresentatives() {
+        List<T> ret = new ArrayList<>();
+        representatives.forEach(r -> ret.add(r.getElement()));
+        return ret;
+    }
+
+    public Stream<T> elements() {
+        return elements.stream().map(Element::getElement);
     }
 
 }

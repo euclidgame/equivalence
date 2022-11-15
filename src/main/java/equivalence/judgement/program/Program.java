@@ -12,5 +12,7 @@ public interface Program {
 
     List<Type> inputTypes();
 
-    String compile();
+    void compile();
+
+    String getExecutable();
 }

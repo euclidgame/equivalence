@@ -7,6 +7,10 @@ import java.util.List;
 public class SimpleProgram implements Program {
     private final String path;
 
+    private String executable;
+
+    private static final ProcessBuilder builder = new ProcessBuilder();
+
     public SimpleProgram(String relativePath) {
         path = relativePath;
     }
@@ -27,7 +31,19 @@ public class SimpleProgram implements Program {
     }
 
     @Override
-    public String compile() {
-        return null;
+    public void compile() {
+        if (path.endsWith(".c")) {
+            executable = path.replace(".c", ".out");
+            builder.command("gcc", path);
+        }
+        if (path.endsWith(".cpp")) {
+            executable = path.replace(".cpp", ".out");
+            builder.command("g++", path);
+        }
+    }
+
+    @Override
+    public String getExecutable() {
+        return executable;
     }
 }
