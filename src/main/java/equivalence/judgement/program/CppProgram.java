@@ -10,7 +10,9 @@ public class CppProgram extends SimpleProgram {
     @Override
     public void compile() {
         String path = program.getAbsolutePath();
-        executable = path.replace(".cpp", ".out");
-        builder.command("g++", path);
+        String[] dirs = path.split("/");
+        String fileName = dirs[dirs.length - 1];
+        executable = "/tmp/" + fileName.replace(".cpp", ".out");
+        builder.command("g++", path, "-o", executable);
     }
 }
