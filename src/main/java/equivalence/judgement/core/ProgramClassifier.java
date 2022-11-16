@@ -99,13 +99,13 @@ public class ProgramClassifier {
                             builder.redirectInput(inputFile);
                             builder.redirectOutput(new File(output1));
                             Process p1 = builder.start();
-                            p1.waitFor(2, SECONDS);
+                            p1.waitFor(10, SECONDS);
 
                             builder.command(representative.getExecutable());
                             builder.redirectInput(inputFile);
                             builder.redirectOutput(new File(output2));
                             Process p2 = builder.start();
-                            p2.waitFor(2, SECONDS);
+                            p2.waitFor(10, SECONDS);
                             if (p1.exitValue() == p2.exitValue()) {
                                 if (p1.exitValue() == 0 && !compareFiles(output1, output2)) {
                                     eqFlag = false;

@@ -52,7 +52,7 @@ public class Main {
             result.elements().forEach(p1 -> {
                 if (result.getOrderOf(p1) > order) {
                     Program rep1 = result.getRepresentativeOf(p1);
-                    String[] temp = new String[]{rep.relativePath(), rep1.relativePath()};
+                    String[] temp = new String[]{p.relativePath(), p1.relativePath()};
                     if (rep.equals(rep1)) {
                         equal.add(temp);
                     }

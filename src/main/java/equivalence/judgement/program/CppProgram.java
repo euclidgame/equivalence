@@ -1,9 +1,7 @@
 package equivalence.judgement.program;
 
-import java.io.BufferedReader;
 import java.io.File;
 import java.io.IOException;
-import java.io.InputStreamReader;
 
 import static java.util.concurrent.TimeUnit.SECONDS;
 
@@ -25,6 +23,12 @@ public class CppProgram extends SimpleProgram {
             int x = p.exitValue();
             if (x != 0) {
                 executable = null;
+//                System.out.println(path);
+//                BufferedReader r = new BufferedReader(new InputStreamReader(p.getErrorStream()));
+//                String out;
+//                while ((out = r.readLine()) != null) {
+//                    System.out.println(out + System.getProperty("line.separator"));
+//                }
             }
         }
         catch (IOException | InterruptedException e) {
