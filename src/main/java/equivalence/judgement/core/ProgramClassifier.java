@@ -1,7 +1,8 @@
 package equivalence.judgement.core;
 
+import equivalence.judgement.program.CProgram;
+import equivalence.judgement.program.CppProgram;
 import equivalence.judgement.program.Program;
-import equivalence.judgement.program.SimpleProgram;
 import equivalence.judgement.type.Type;
 import equivalence.judgement.type.TypeExtractor;
 import equivalence.judgement.util.ResultHolder;
@@ -21,7 +22,7 @@ import java.util.Objects;
 
 public class ProgramClassifier {
 
-    private final String workDir;
+    private final File workDir;
 
     private final String inputPath;
 
@@ -33,9 +34,9 @@ public class ProgramClassifier {
 
     private final ResultHolder<Program> result = new ResultHolder<>();
 
-    public ProgramClassifier(String dir) {
+    public ProgramClassifier(File dir) {
         workDir = dir;
-        inputPath = workDir + "/input.txt";
+        inputPath = dir.getAbsolutePath() + "/input.txt";
         initialize();
     }
 
@@ -43,7 +44,8 @@ public class ProgramClassifier {
         // get inputTypes
         inputTypes = new ArrayList<>();
         try {
-            BufferedReader reader = new BufferedReader(new FileReader(workDir + "/stdin_format.txt"));
+            BufferedReader reader = new BufferedReader(new FileReader(workDir.getAbsoluteFile()
+                    + "/stdin_format.txt"));
             String line;
             while ((line = reader.readLine()) != null) {
                 String[] types = line.split(" ");
@@ -59,11 +61,15 @@ public class ProgramClassifier {
         }
 
         // get programs
-        File dirFile = new File(workDir);
         programs = new ArrayList<>();
-        for (String file: Objects.requireNonNull(dirFile.list())) {
-            if (file.endsWith(".cpp") || file.endsWith(".c")) {
-                Program newProgram = new SimpleProgram(workDir + "/" + file);
+        for (String file: Objects.requireNonNull(workDir.list())) {
+            if (file.endsWith(".c")) {
+                Program newProgram = new CProgram(new File(workDir, file));
+                newProgram.compile();
+                programs.add(newProgram);
+            }
+            else if (file.endsWith(".cpp")) {
+                Program newProgram = new CppProgram(new File(workDir, file));
                 newProgram.compile();
                 programs.add(newProgram);
             }
@@ -126,6 +132,10 @@ public class ProgramClassifier {
         } catch (IOException e) {
             throw new RuntimeException(e);
         }
+    }
+
+    public ResultHolder<Program> getResult() {
+        return result;
     }
 
 }

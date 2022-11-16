@@ -2,44 +2,33 @@ package equivalence.judgement.program;
 
 import equivalence.judgement.type.Type;
 
+import java.io.File;
 import java.util.List;
 
-public class SimpleProgram implements Program {
-    private final String path;
+public abstract class SimpleProgram implements Program {
+    protected final File program;
 
-    private String executable;
+    protected String executable;
 
-    private static final ProcessBuilder builder = new ProcessBuilder();
+    protected static final ProcessBuilder builder = new ProcessBuilder();
 
-    public SimpleProgram(String relativePath) {
-        path = relativePath;
+    public SimpleProgram(File file) {
+        program = file;
     }
 
     @Override
     public String relativePath() {
-        return path;
+        return program.getPath();
     }
 
     @Override
     public String absolutePath() {
-        return null;
+        return program.getAbsolutePath();
     }
 
     @Override
     public List<Type> inputTypes() {
         return null;
-    }
-
-    @Override
-    public void compile() {
-        if (path.endsWith(".c")) {
-            executable = path.replace(".c", ".out");
-            builder.command("gcc", path);
-        }
-        if (path.endsWith(".cpp")) {
-            executable = path.replace(".cpp", ".out");
-            builder.command("g++", path);
-        }
     }
 
     @Override
