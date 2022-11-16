@@ -30,7 +30,7 @@ public class Main {
         for (String sub: Objects.requireNonNull(workDir.list())) {
             File subDir = new File(workDir, sub);
             if (subDir.isDirectory()) {
-                ProgramClassifier classifier = new ProgramClassifier(subDir, outputDir, tempDir);
+                ProgramClassifier classifier = new ProgramClassifier(subDir, tempDir);
                 classifier.classify();
                 ResultHolder<Program> result = classifier.getResult();
                 processResult(result, equalResult, inequalResult);
@@ -42,6 +42,7 @@ public class Main {
         } catch (FileNotFoundException e) {
             throw new RuntimeException(e);
         }
+        deleteDir(tempDir);
     }
 
     private static void processResult(ResultHolder<Program> result, List<String[]> equal, List<String[]> inequal) {
@@ -61,6 +62,20 @@ public class Main {
                 }
             });
         });
+    }
+
+    private static boolean deleteDir(File dir) {
+        if (dir.isDirectory()) {
+            String[] children = dir.list();
+            assert children != null;
+            for (String child : children) {
+                boolean success = deleteDir(new File(dir, child));
+                if (!success) {
+                    return false;
+                }
+            }
+        }
+        return dir.delete();
     }
 
 }

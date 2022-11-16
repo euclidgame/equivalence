@@ -20,11 +20,11 @@ import java.util.ArrayList;
 import java.util.List;
 import java.util.Objects;
 
+import static java.util.concurrent.TimeUnit.SECONDS;
+
 public class ProgramClassifier {
 
     private final File workDir;
-
-    private final File outputDir;
 
     private final File tempDir;
 
@@ -38,11 +38,13 @@ public class ProgramClassifier {
 
     private final ResultHolder<Program> result = new ResultHolder<>();
 
-    public ProgramClassifier(File dir, File output, File temp) {
+    private final File inputFile;
+
+    public ProgramClassifier(File dir, File temp) {
         workDir = dir;
-        outputDir = output;
         tempDir = temp;
         inputPath = tempDir.getAbsolutePath() + "/input.txt";
+        inputFile = new File(inputPath);
         initialize();
     }
 
@@ -86,32 +88,48 @@ public class ProgramClassifier {
         try {
             for (Program program: programs) {
                 boolean classified = false;
-                for (Program representative: result.getRepresentatives()) {
-                    boolean eqFlag = true;
-                    for (int i = 0; i < 100; i ++) {
-                        generateInput();
-                        String output1 = tempDir.getAbsolutePath() + "/output1.txt",
-                               output2 = tempDir.getAbsolutePath() + "/output2.txt";
-                        builder.command(program.getExecutable(), " < ", inputPath, " > ", output1);
-                        System.out.println(builder.command());
-                        builder.start();
-                        builder.command(representative.getExecutable(), " < ", inputPath, " > ", output2).start();
-                        if (!compareFiles(output1, output2)) {
-                            eqFlag = false;
+                if (program.getExecutable() != null) {
+                    for (Program representative: result.getRepresentatives()) {
+                        boolean eqFlag = true;
+                        for (int i = 0; i < 100; i ++) {
+                            generateInput();
+                            String output1 = tempDir.getAbsolutePath() + "/output1.txt",
+                                    output2 = tempDir.getAbsolutePath() + "/output2.txt";
+                            builder.command(program.getExecutable());
+                            builder.redirectInput(inputFile);
+                            builder.redirectOutput(new File(output1));
+                            Process p1 = builder.start();
+                            p1.waitFor(2, SECONDS);
+
+                            builder.command(representative.getExecutable());
+                            builder.redirectInput(inputFile);
+                            builder.redirectOutput(new File(output2));
+                            Process p2 = builder.start();
+                            p2.waitFor(2, SECONDS);
+                            if (p1.exitValue() == p2.exitValue()) {
+                                if (p1.exitValue() == 0 && !compareFiles(output1, output2)) {
+                                    eqFlag = false;
+                                    break;
+                                }
+                            }
+                            else {
+                                eqFlag = false;
+                                break;
+                            }
+                        }
+                        if (eqFlag) {
+                            classified = true;
+                            result.addElement(program, representative);
                             break;
                         }
                     }
-                    if (eqFlag) {
-                        classified = true;
-                        result.addElement(program, representative);
-                        break;
+                    if (!classified) {
+                        result.addRepresentative(program);
                     }
                 }
-                if (!classified) {
-                    result.addRepresentative(program);
-                }
+
             }
-        } catch (IOException e) {
+        } catch (IOException | InterruptedException e) {
             throw new RuntimeException(e);
         }
 
