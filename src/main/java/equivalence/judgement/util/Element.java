@@ -6,9 +6,12 @@ public class Element<T> {
 
     private T representative;
 
-    public Element(T element, T representative) {
+    private final int order;
+
+    public Element(T element, T representative, int order) {
         this.element = element;
         this.representative = representative;
+        this.order = order;
     }
 
     public T getElement() {
@@ -17,6 +20,14 @@ public class Element<T> {
 
     public void setRepresentative(T representative) {
         this.representative = representative;
+    }
+
+    public T getRepresentative() {
+        return representative;
+    }
+
+    public int getOrder() {
+        return order;
     }
 
 }

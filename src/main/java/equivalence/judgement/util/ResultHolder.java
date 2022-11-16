@@ -1,26 +1,30 @@
 package equivalence.judgement.util;
 
 import java.util.ArrayList;
+import java.util.HashMap;
 import java.util.List;
+import java.util.Map;
 import java.util.stream.Stream;
 
 public class ResultHolder<T> {
 
-    private final List<Element<T>> elements = new ArrayList<>();
-
     private final List<Element<T>> representatives = new ArrayList<>();
+
+    private final Map<T, Element<T>> elements = new HashMap<>();
+
+    private int count = 0;
 
     public ResultHolder() {}
 
     public void addRepresentative(T representative) {
-        Element<T> newElement = new Element<>(representative, representative);
-        elements.add(newElement);
+        Element<T> newElement = new Element<>(representative, representative, ++ count);
+        elements.put(representative, newElement);
         representatives.add(newElement);
     }
 
     public void addElement(T element, T representative) {
-        Element<T> newElement = new Element<>(element, representative);
-        elements.add(newElement);
+        Element<T> newElement = new Element<>(element, representative, ++ count);
+        elements.put(element, newElement);
     }
 
     public Stream<T> representatives() {
@@ -34,7 +38,15 @@ public class ResultHolder<T> {
     }
 
     public Stream<T> elements() {
-        return elements.stream().map(Element::getElement);
+        return elements.keySet().stream();
+    }
+
+    public T getRepresentativeOf(T program) {
+        return elements.get(program).getRepresentative();
+    }
+
+    public int getOrderOf(T program) {
+        return elements.get(program).getOrder();
     }
 
 }
