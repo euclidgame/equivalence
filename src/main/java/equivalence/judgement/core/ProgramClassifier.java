@@ -83,7 +83,7 @@ public class ProgramClassifier {
                 boolean eqFlag = true;
                 for (int i = 0; i < 100; i ++) {
                     generateInput();
-                    String output1 = workDir + "/output1.txt", output2 = workDir + "/output2.txt";
+                    String output1 = "/tmp/output1.txt", output2 = "/tmp/output2.txt";
                     builder.command(program.getExecutable(), " < ", inputPath, " > ", output1);
                     builder.command(representative.getExecutable(), " < ", inputPath, " > ", output2);
                     if (!compareFiles(output1, output2)) {

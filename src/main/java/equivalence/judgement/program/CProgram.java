@@ -11,8 +11,10 @@ public class CProgram extends SimpleProgram {
     @Override
     public void compile() {
         String path = program.getAbsolutePath();
-        executable = path.replace(".c", ".out");
-        builder.command("gcc", path);
+        String[] dirs = path.split("/");
+        String fileName = dirs[dirs.length - 1];
+        executable = "/tmp/" + fileName.replace(".c", ".out");
+        builder.command("gcc", path, "-o", executable);
     }
 
 }

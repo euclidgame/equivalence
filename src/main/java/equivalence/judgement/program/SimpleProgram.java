@@ -18,7 +18,10 @@ public abstract class SimpleProgram implements Program {
 
     @Override
     public String relativePath() {
-        return program.getPath();
+        String path = program.getAbsolutePath();
+        String[] dirs = path.split("/");
+        int tot = dirs.length;
+        return dirs[tot - 2] + "/" + dirs[tot - 1];
     }
 
     @Override
