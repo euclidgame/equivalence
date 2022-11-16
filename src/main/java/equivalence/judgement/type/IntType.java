@@ -32,15 +32,6 @@ public class IntType implements Type {
     public String randomValue() {
         int len = random1.nextInt(maxLength - minLength + 1) + minLength;
         // len is a random number, the length of the generated
-        StringBuffer sb = new StringBuffer();
-        if (len > 0) {
-            int index = random1.nextInt(repo.length() - 1) + 1;
-            sb.append(repo.charAt(index));
-            for (int i = 0; i < len - 1; i ++) {
-                index = random1.nextInt(repo.length());
-                sb.append(repo.charAt(index));
-            }
-        }
-        return sb.toString();
+        return Integer.toString(len);
     }
 }

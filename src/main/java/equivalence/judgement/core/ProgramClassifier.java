@@ -89,6 +89,7 @@ public class ProgramClassifier {
             for (Program program: programs) {
                 boolean classified = false;
                 if (program.getExecutable() != null) {
+                    System.out.println(program.absolutePath());
                     for (Program representative: result.getRepresentatives()) {
                         boolean eqFlag = true;
                         for (int i = 0; i < 100; i ++) {
@@ -97,15 +98,20 @@ public class ProgramClassifier {
                                     output2 = tempDir.getAbsolutePath() + "/output2.txt";
                             builder.command(program.getExecutable());
                             builder.redirectInput(inputFile);
-                            builder.redirectOutput(new File(output1));
+                            File o1 = new File(output1);
+                            builder.redirectOutput(o1);
+                            builder.redirectError(o1);
                             Process p1 = builder.start();
                             p1.waitFor(10, SECONDS);
 
                             builder.command(representative.getExecutable());
                             builder.redirectInput(inputFile);
-                            builder.redirectOutput(new File(output2));
+                            File o2 = new File(output2);
+                            builder.redirectOutput(o2);
+                            builder.redirectError(o2);
                             Process p2 = builder.start();
                             p2.waitFor(10, SECONDS);
+
                             if (p1.exitValue() == p2.exitValue()) {
                                 if (p1.exitValue() == 0 && !compareFiles(output1, output2)) {
                                     eqFlag = false;
