@@ -23,10 +23,14 @@ public class Main {
         if (!outputDir.exists()) {
             outputDir.mkdir();
         }
+        File tempDir = new File("tmp");
+        if (!tempDir.exists()) {
+            tempDir.mkdir();
+        }
         for (String sub: Objects.requireNonNull(workDir.list())) {
             File subDir = new File(workDir, sub);
             if (subDir.isDirectory()) {
-                ProgramClassifier classifier = new ProgramClassifier(subDir);
+                ProgramClassifier classifier = new ProgramClassifier(subDir, outputDir, tempDir);
                 classifier.classify();
                 ResultHolder<Program> result = classifier.getResult();
                 processResult(result, equalResult, inequalResult);
@@ -58,4 +62,5 @@ public class Main {
             });
         });
     }
+
 }

@@ -36,6 +36,7 @@ public abstract class SimpleProgram implements Program {
 
     @Override
     public String getExecutable() {
+        System.out.println(executable);
         return executable;
     }
 }

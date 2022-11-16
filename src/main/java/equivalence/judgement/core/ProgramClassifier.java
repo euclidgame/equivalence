@@ -24,6 +24,10 @@ public class ProgramClassifier {
 
     private final File workDir;
 
+    private final File outputDir;
+
+    private final File tempDir;
+
     private final String inputPath;
 
     private List<Type> inputTypes;
@@ -34,9 +38,11 @@ public class ProgramClassifier {
 
     private final ResultHolder<Program> result = new ResultHolder<>();
 
-    public ProgramClassifier(File dir) {
+    public ProgramClassifier(File dir, File output, File temp) {
         workDir = dir;
-        inputPath = dir.getAbsolutePath() + "/input.txt";
+        outputDir = output;
+        tempDir = temp;
+        inputPath = tempDir.getAbsolutePath() + "/input.txt";
         initialize();
     }
 
@@ -77,30 +83,38 @@ public class ProgramClassifier {
     }
 
     public void classify() {
-        for (Program program: programs) {
-            boolean classified = false;
-            for (Program representative: result.getRepresentatives()) {
-                boolean eqFlag = true;
-                for (int i = 0; i < 100; i ++) {
-                    generateInput();
-                    String output1 = "/tmp/output1.txt", output2 = "/tmp/output2.txt";
-                    builder.command(program.getExecutable(), " < ", inputPath, " > ", output1);
-                    builder.command(representative.getExecutable(), " < ", inputPath, " > ", output2);
-                    if (!compareFiles(output1, output2)) {
-                        eqFlag = false;
+        try {
+            for (Program program: programs) {
+                boolean classified = false;
+                for (Program representative: result.getRepresentatives()) {
+                    boolean eqFlag = true;
+                    for (int i = 0; i < 100; i ++) {
+                        generateInput();
+                        String output1 = tempDir.getAbsolutePath() + "/output1.txt",
+                               output2 = tempDir.getAbsolutePath() + "/output2.txt";
+                        builder.command(program.getExecutable(), " < ", inputPath, " > ", output1);
+                        System.out.println(builder.command());
+                        builder.start();
+                        builder.command(representative.getExecutable(), " < ", inputPath, " > ", output2).start();
+                        if (!compareFiles(output1, output2)) {
+                            eqFlag = false;
+                            break;
+                        }
+                    }
+                    if (eqFlag) {
+                        classified = true;
+                        result.addElement(program, representative);
                         break;
                     }
                 }
-                if (eqFlag) {
-                    classified = true;
-                    result.addElement(program, representative);
-                    break;
+                if (!classified) {
+                    result.addRepresentative(program);
                 }
             }
-            if (!classified) {
-                result.addRepresentative(program);
-            }
+        } catch (IOException e) {
+            throw new RuntimeException(e);
         }
+
     }
 
     private void generateInput() {
