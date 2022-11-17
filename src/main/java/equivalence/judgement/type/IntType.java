@@ -8,14 +8,12 @@ public class IntType implements Type {
 
     private final int minLength;
 
-    private static final String repo = "0123456789";
-
     private static final Random random1 = new Random();
 
     public IntType(int max, int min) {
         maxLength = max;
         minLength = min;
-        // min<=length(x)<=max
+        // min<=x<=max
     }
 
     @Override
@@ -31,7 +29,6 @@ public class IntType implements Type {
     @Override
     public String randomValue() {
         int len = random1.nextInt(maxLength - minLength + 1) + minLength;
-        // len is a random number, the length of the generated
         return Integer.toString(len);
     }
 }

@@ -89,7 +89,6 @@ public class ProgramClassifier {
             for (Program program: programs) {
                 boolean classified = false;
                 if (program.getExecutable() != null) {
-                    System.out.println(program.absolutePath());
                     for (Program representative: result.getRepresentatives()) {
                         boolean eqFlag = true;
                         for (int i = 0; i < 100; i ++) {
@@ -102,7 +101,7 @@ public class ProgramClassifier {
                             builder.redirectOutput(o1);
                             builder.redirectError(o1);
                             Process p1 = builder.start();
-                            p1.waitFor(10, SECONDS);
+                            boolean exit1 = p1.waitFor(10, SECONDS);
 
                             builder.command(representative.getExecutable());
                             builder.redirectInput(inputFile);
@@ -110,17 +109,14 @@ public class ProgramClassifier {
                             builder.redirectOutput(o2);
                             builder.redirectError(o2);
                             Process p2 = builder.start();
-                            p2.waitFor(10, SECONDS);
-
-                            if (p1.exitValue() == p2.exitValue()) {
-                                if (p1.exitValue() == 0 && !compareFiles(output1, output2)) {
-                                    eqFlag = false;
-                                    break;
-                                }
-                            }
-                            else {
+                            boolean exit2 = p2.waitFor(10, SECONDS);
+                            if (!exit1 || !exit2 || p1.exitValue() != p2.exitValue()) {
                                 eqFlag = false;
                                 break;
+                            }
+                            else if (p1.exitValue() == 0 && !compareFiles(output1, output2)) {
+                                    eqFlag = false;
+                                    break;
                             }
                         }
                         if (eqFlag) {
@@ -133,12 +129,11 @@ public class ProgramClassifier {
                         result.addRepresentative(program);
                     }
                 }
-
             }
+            System.out.println("Equivalence Judgement Done!");
         } catch (IOException | InterruptedException e) {
             throw new RuntimeException(e);
         }
-
     }
 
     private void generateInput() {
