@@ -19,16 +19,9 @@ public class CppProgram extends SimpleProgram {
             String fileName = dirs[dirs.length - 1];
             executable = "./tmp/" + fileName.replace(".cpp", ".out");
             Process p = builder.command("g++", "-std=c++14", path, "-o", executable).start();
-            p.waitFor(2, SECONDS);
-            int x = p.exitValue();
-            if (x != 0) {
+            boolean exit = p.waitFor(4, SECONDS);
+            if (!exit || p.exitValue() != 0) {
                 executable = null;
-//                System.out.println(path);
-//                BufferedReader r = new BufferedReader(new InputStreamReader(p.getErrorStream()));
-//                String out;
-//                while ((out = r.readLine()) != null) {
-//                    System.out.println(out + System.getProperty("line.separator"));
-//                }
             }
         }
         catch (IOException | InterruptedException e) {

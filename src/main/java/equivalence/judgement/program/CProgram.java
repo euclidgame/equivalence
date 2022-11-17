@@ -21,9 +21,8 @@ public class CProgram extends SimpleProgram {
             String fileName = dirs[dirs.length - 1];
             executable = "./tmp/" + fileName.replace(".c", ".out");
             Process p = builder.command("gcc", path, "-o", executable).start();
-            p.waitFor(2, SECONDS);
-            int x = p.exitValue();
-            if (x != 0) {
+            boolean exit = p.waitFor(4, SECONDS);
+            if (!exit || p.exitValue() != 0) {
                 executable = null;
             }
         }
