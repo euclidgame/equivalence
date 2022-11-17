@@ -19,11 +19,14 @@ public class CProgram extends SimpleProgram {
             String path = program.getAbsolutePath();
             String[] dirs = path.split("/");
             String fileName = dirs[dirs.length - 1];
-            executable = "./tmp/" + fileName.replace(".c", ".out");
+            executable = "/tmp/" + fileName.replace(".c", ".out");
             Process p = builder.command("gcc", path, "-o", executable).start();
             boolean exit = p.waitFor(4, SECONDS);
             if (!exit || p.exitValue() != 0) {
                 executable = null;
+            }
+            else {
+                System.out.println("Successfully compile " + program.getPath());
             }
         }
         catch (IOException | InterruptedException e) {

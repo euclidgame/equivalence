@@ -130,7 +130,7 @@ public class ProgramClassifier {
                     }
                 }
             }
-            System.out.println("Equivalence Judgement Done!");
+            System.out.println("Equivalence Judgement for " + workDir + " Done!");
         } catch (IOException | InterruptedException e) {
             throw new RuntimeException(e);
         }

@@ -21,7 +21,7 @@ public abstract class SimpleProgram implements Program {
         String path = program.getAbsolutePath();
         String[] dirs = path.split("/");
         int tot = dirs.length;
-        return dirs[tot - 2] + "/" + dirs[tot - 1];
+        return dirs[tot - 3] + "/" + dirs[tot - 2] + "/" + dirs[tot - 1];
     }
 
     @Override

@@ -23,10 +23,7 @@ public class Main {
         if (!outputDir.exists()) {
             outputDir.mkdir();
         }
-        File tempDir = new File("tmp");
-        if (!tempDir.exists()) {
-            tempDir.mkdir();
-        }
+        File tempDir = new File("/tmp");
         for (String sub: Objects.requireNonNull(workDir.list())) {
             File subDir = new File(workDir, sub);
             if (subDir.isDirectory()) {
@@ -42,7 +39,7 @@ public class Main {
         } catch (FileNotFoundException e) {
             throw new RuntimeException(e);
         }
-        deleteDir(tempDir);
+//        deleteDir(tempDir);
     }
 
     private static void processResult(ResultHolder<Program> result, List<String[]> equal, List<String[]> inequal) {
